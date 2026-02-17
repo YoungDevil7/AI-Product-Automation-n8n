@@ -1,0 +1,193 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "messages": {
+          "values": [
+            {}
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        144
+      ],
+      "id": "827b91f9-6d1d-44a0-adce-3d3fe5aa876d",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "UqCpYbrliiCDkdZ5",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -80,
+        208
+      ],
+      "typeVersion": 1,
+      "id": "0a123ea6-37b6-4e07-9ae9-5e26f831b32c",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "s/components/sticky-notes/)"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -400,
+        -128
+      ],
+      "typeVersion": 1,
+      "id": "51c4cf2c-4312-4e56-94a3-af0e67d2973f",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1o11cRUTCYaHYNKtoSeQ8TiLuOFG7q0Z8kKsam0XqYPE",
+          "mode": "list",
+          "cachedResultName": "Untitled form (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1o11cRUTCYaHYNKtoSeQ8TiLuOFG7q0Z8kKsam0XqYPE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 371490151,
+          "mode": "list",
+          "cachedResultName": "Form responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1o11cRUTCYaHYNKtoSeQ8TiLuOFG7q0Z8kKsam0XqYPE/edit#gid=371490151"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -384
+      ],
+      "id": "306187cc-db38-4284-9d1f-01a11221e85b",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "j6niL78L5e2L3cVi",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=return fuck when triggered row add section {{ $json['what u do'] }}",
+        "options": {
+          "systemMessage": "You are a product analyst\n\nTake the user feedback from the sheet and output:\n 1. Sentiment (Positive/Negative)\n 2. Category (Bug/Feature) 3. A suggested reply."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        192,
+        -304
+      ],
+      "id": "bf9cabf2-e268-4624-b1c0-f086bbb88df4",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        16,
+        -208
+      ],
+      "id": "5e8deaa8-2005-4320-b9c6-d413d09a27c2",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "UqCpYbrliiCDkdZ5",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "Take the user feedback from the sheet and output: 1. Sentiment (Positive/Negative) 2. Category (Bug/Feature) 3. A suggested reply.\"",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.sentimentAnalysis",
+      "typeVersion": 1.1,
+      "position": [
+        48,
+        -32
+      ],
+      "id": "ce00b531-2bc7-498b-9c81-cbf716600574",
+      "name": "Sentiment Analysis"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Sentiment Analysis",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "349f09d7-438a-41f3-ac18-4ed2c2468376",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e1a1400ee667058a64d158f77291e905be8a6174423c426fcbe6eecf7e9eae67"
+  },
+  "id": "fmcRgR52mnGjMvW6",
+  "tags": []
+}
